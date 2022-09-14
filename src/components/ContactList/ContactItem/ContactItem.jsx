@@ -1,7 +1,7 @@
 import css from './ContactItem.module.css';
 import PropTypes from 'prop-types';
 
-export function ContactItem({ id, name, number, onDeleteContactById }) {
+export default function ContactItem({ id, name, number, onDeleteContactById }) {
   return (
     <>
       <td>{name}</td>

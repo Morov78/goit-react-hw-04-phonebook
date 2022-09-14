@@ -1,25 +1,24 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
-import { ContactForm } from './ContactForm/ContactForm';
-import { ContactList } from './ContactList/ContactList';
-import { Filter } from './Filter/Filter';
+import ContactForm from './ContactForm/ContactForm';
+import ContactList from './ContactList/ContactList';
+import Filter from './Filter/Filter';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-class App extends Component {
-  state = {
-    contacts: [],
-    filter: '',
-  };
+const getBeginLocalContacts = () => {
+  return JSON.parse(window.localStorage.getItem('phonebookContacts')) ?? [];
+};
 
-  handleChangeFilter = event => {
-    const { value } = event.currentTarget;
-    this.setState({ filter: value });
-  };
+export default function App() {
+  const [contacts, setContacts] = useState(getBeginLocalContacts);
+  const [filter, setFilter] = useState('');
 
-  addContact = (name, number) => {
-    const { contacts } = this.state;
+  useEffect(() => {
+    window.localStorage.setItem('phonebookContacts', JSON.stringify(contacts));
+  }, [contacts]);
+
+  const handleAddContact = (name, number) => {
     if (contacts.find(contact => contact.name === name)) {
-      // window.alert(`${name} is already in contacts`);
       Notify.warning(`${name} is already in contacts`);
       return;
     }
@@ -29,68 +28,43 @@ class App extends Component {
       name,
       number,
     };
-    this.setState({ contacts: [newContact, ...contacts] });
+
+    setContacts([newContact, ...contacts]);
   };
 
-  onDeleteContactById = contactId => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
-    }));
+  const handleDeleteContactById = contactId => {
+    setContacts(contacts.filter(contact => contact.id !== contactId));
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    const prevContacts = prevState.contacts;
-    const nextContacts = this.state.contacts;
+  const handleChangeFilter = event => {
+    setFilter(event.currentTarget.value);
+  };
 
-    if (prevContacts !== nextContacts) {
-      localStorage.setItem('phonebookContacts', JSON.stringify(nextContacts));
-    }
-  }
-
-  //добавив таймаут, щоб було видно коли читає дані з localStorage
-  componentDidMount() {
-    try {
-      const localContacts = localStorage.getItem('phonebookContacts');
-
-      if (localContacts) {
-        setTimeout(() => {
-          const contacts = JSON.parse(localContacts);
-          this.setState({ contacts });
-        }, 1000);
-      }
-    } catch (error) {
-      console.error('Get state error: ', error.message);
-    }
-  }
-
-  render() {
-    const { contacts, filter } = this.state;
-    const filterContacts = contacts.filter(({ name }) =>
+  const filterContacts = () => {
+    return contacts.filter(({ name }) =>
       name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
     );
+  };
 
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          fontSize: 40,
-          color: '#010101',
-          flexDirection: 'column',
-        }}
-      >
-        <h1>Phonebook</h1>
-        <ContactForm onSubmit={this.addContact} />
-        <h2>Contacts</h2>
-        <Filter value={filter} onChange={this.handleChangeFilter} />
-        <ContactList
-          contacts={filterContacts}
-          onDeleteContactById={this.onDeleteContactById}
-        />
-      </div>
-    );
-  }
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: 40,
+        color: '#010101',
+        flexDirection: 'column',
+      }}
+    >
+      <h1>Phonebook</h1>
+      <ContactForm onSubmit={handleAddContact} />
+      <h2>Contacts</h2>
+      <Filter value={filter} onChange={handleChangeFilter} />
+      <ContactList
+        contacts={filter === '' ? contacts : filterContacts()}
+        onDeleteContactById={handleDeleteContactById}
+      />
+    </div>
+  );
 }
-
-export default App;

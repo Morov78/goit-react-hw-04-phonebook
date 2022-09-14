@@ -1,8 +1,8 @@
-import { ContactItem } from './ContactItem/ContactItem';
+import ContactItem from './ContactItem/ContactItem';
 import css from './ContactList.module.css';
 import PropTypes from 'prop-types';
 
-export function ContactList({ contacts, onDeleteContactById }) {
+export default function ContactList({ contacts, onDeleteContactById }) {
   return (
     <table className={css.table}>
       <thead>
@@ -12,6 +12,7 @@ export function ContactList({ contacts, onDeleteContactById }) {
           <th>Delete</th>
         </tr>
       </thead>
+
       <tbody>
         {contacts.map(({ id, name, number }) => {
           return (
@@ -26,7 +27,6 @@ export function ContactList({ contacts, onDeleteContactById }) {
           );
         })}
       </tbody>
-      <thead></thead>
     </table>
   );
 }

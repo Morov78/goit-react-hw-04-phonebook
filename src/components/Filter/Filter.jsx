@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import css from './Filter.module.css';
 
-export function Filter({ value, onChange }) {
+export default function Filter({ value, onChange }) {
   return (
     <label className={css.filter__label}>
       Find contacts by name
