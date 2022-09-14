@@ -23,6 +23,7 @@ export default function ContactForm({ onSubmit }) {
 
   const handleSubmit = event => {
     event.preventDefault();
+    event.currentTarget.elements.name.focus();
     onSubmit(name, number);
     setName('');
     setNumber('');
