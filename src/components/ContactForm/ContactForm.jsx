@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import css from './ContactForm.module.css';
 
 export default function ContactForm({ onSubmit }) {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+  const inputNameRef = useRef();
 
   const handleChange = event => {
     const { name, value } = event.currentTarget;
@@ -23,7 +24,8 @@ export default function ContactForm({ onSubmit }) {
 
   const handleSubmit = event => {
     event.preventDefault();
-    event.currentTarget.elements.name.focus();
+    console.log(inputNameRef.current);
+    inputNameRef.current.focus();
     onSubmit(name, number);
     setName('');
     setNumber('');
@@ -35,6 +37,7 @@ export default function ContactForm({ onSubmit }) {
         <label className={css.form__label}>
           Name
           <input
+            ref={inputNameRef}
             className={css.form__input}
             type="text"
             name="name"
