@@ -40,11 +40,9 @@ export default function App() {
     setFilter(event.currentTarget.value);
   };
 
-  const filterContacts = () => {
-    return contacts.filter(({ name }) =>
-      name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
-    );
-  };
+  const filterContacts = contacts.filter(({ name }) =>
+    name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+  );
 
   return (
     <div
@@ -62,7 +60,7 @@ export default function App() {
       <h2>Contacts</h2>
       <Filter value={filter} onChange={handleChangeFilter} />
       <ContactList
-        contacts={filter === '' ? contacts : filterContacts()}
+        contacts={filter === '' ? contacts : filterContacts}
         onDeleteContactById={handleDeleteContactById}
       />
     </div>
